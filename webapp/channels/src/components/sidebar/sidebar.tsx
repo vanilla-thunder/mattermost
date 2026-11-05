@@ -6,7 +6,9 @@ import React, {lazy} from 'react';
 
 import {makeAsyncComponent} from 'components/async_load';
 import DataPrefetch from 'components/data_prefetch';
+import UpcomingEvents from 'components/nextcloud_calendar/upcoming_events';
 import ResizableLhs from 'components/resizable_sidebar/resizable_lhs';
+import FollowedThreadsLoader from 'components/sidebar/sidebar_channel/sidebar_channel_threads/followed_threads_loader';
 import SidebarHeader from 'components/sidebar/sidebar_header';
 
 import Pluggable from 'plugins/pluggable';
@@ -263,6 +265,8 @@ export default class Sidebar extends React.PureComponent<Props, State> {
                     onDragStart={this.onDragStart}
                     onDragEnd={this.onDragEnd}
                 />
+                <UpcomingEvents/>
+                <FollowedThreadsLoader/>
                 <DataPrefetch/>
                 <SidebarJoinRequestCountsSync/>
                 {this.renderModals()}

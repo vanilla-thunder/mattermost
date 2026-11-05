@@ -1,0 +1,17 @@
+# Build context is the repository root; only the web app and the container files are needed.
+*
+!webapp
+!deploy/vibemost/nginx
+!deploy/vibemost/docker-entrypoint.d
+
+**/node_modules
+**/.rollup.cache
+**/.parcel-cache
+webapp/channels/dist
+webapp/platform/*/dist
+webapp/platform/*/lib
+# Local TypeScript build state: with it, tsc treats the excluded outputs as up to date and
+# emits nothing, so the platform package builds fail.
+**/*.tsbuildinfo
+**/.env
+**/.env.*

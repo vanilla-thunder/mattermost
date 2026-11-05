@@ -51,6 +51,7 @@ describe('components/sidebar/sidebar_channel', () => {
         multiSelectedChannelIds: [],
         autoSortedCategoryIds: new Set<string>(),
         isChannelSelected: false,
+        threadIds: [],
     };
 
     test('should match snapshot', () => {
@@ -159,5 +160,23 @@ describe('components/sidebar/sidebar_channel', () => {
         );
 
         expect(screen.getByRole('listitem')).toHaveClass('expanded');
+    });
+    test('should list followed threads below the channel, except when collapsed into its category', () => {
+        const props = {...baseProps, threadIds: ['thread_id']};
+
+        const {container, rerender} = renderWithContext(
+            <SidebarChannel {...props}/>,
+        );
+        expect(screen.getByRole('list', {name: 'Followed threads'})).toBeInTheDocument();
+        expect(container.querySelector('.SidebarChannel')).toHaveClass('withThreads');
+
+        rerender(
+            <SidebarChannel
+                {...props}
+                isCategoryCollapsed={true}
+            />,
+        );
+        expect(screen.queryByRole('list', {name: 'Followed threads'})).not.toBeInTheDocument();
+        expect(container.querySelector('.SidebarChannel')).not.toHaveClass('withThreads');
     });
 });

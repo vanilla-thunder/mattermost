@@ -3,6 +3,7 @@
 
 /* eslint-disable no-console, no-process-env */
 
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
@@ -17,6 +18,14 @@ const {ModuleFederationPlugin} = require('webpack').container;
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 const packageJson = require('./package.json');
+
+// Vibemost: deployment settings (Mattermost, Nextcloud and Jitsi URLs) come from the .env file
+// the container also uses, see deploy/vibemost/.env.example. Variables already set in the
+// environment win over the file.
+const vibemostEnvFile = path.resolve(__dirname, '../../deploy/vibemost/.env');
+if (fs.existsSync(vibemostEnvFile)) {
+    process.loadEnvFile(vibemostEnvFile);
+}
 
 const NPM_TARGET = process.env.npm_lifecycle_event;
 
@@ -462,6 +471,7 @@ if (DEV) {
 }
 
 const env = {};
+
 if (DEV) {
     env.PUBLIC_PATH = JSON.stringify(publicPath);
 } else {
@@ -473,10 +483,25 @@ config.plugins.push(new webpack.DefinePlugin({
 }));
 
 if (targetIsDevServer) {
+    const proxyTarget = process.env.VIBEMOST_MATTERMOST_URL || process.env.MM_SERVICESETTINGS_SITEURL || 'http://localhost:8065';
+
+    // Vibemost: the runtime config the calendar reads from /vibemost/config.json. The
+    // container entrypoint (deploy/vibemost) writes the same file from the same variables.
+    const nextcloudProxyOrigin = process.env.VIBEMOST_NEXTCLOUD_URL ? new URL(process.env.VIBEMOST_NEXTCLOUD_URL).origin : '';
+    const vibemostRuntimeConfig = {
+        nextcloudUrl: nextcloudProxyOrigin,
+        jitsiHosts: (process.env.VIBEMOST_JITSI_HOSTS ?? '').split(',').map((host) => host.trim()).filter(Boolean),
+    };
     const proxyToServer = {
         logLevel: 'silent',
-        target: process.env.MM_SERVICESETTINGS_SITEURL ?? 'http://localhost:8065',
+        target: proxyTarget,
         xfwd: true,
+
+        // Send the target's own Host and Origin so a remote server behind a
+        // name-based reverse proxy (nginx answers 421 otherwise) accepts the
+        // requests and the WebSocket origin check passes.
+        changeOrigin: true,
+        headers: {Origin: new URL(proxyTarget).origin},
     };
 
     config = {
@@ -484,6 +509,12 @@ if (targetIsDevServer) {
         devtool: 'eval-cheap-module-source-map',
         devServer: {
             liveReload: true,
+
+            // Only real errors in the browser overlay; the build's warnings
+            // (Sass deprecations, unused MUI CSS-layer exports) stay in the terminal.
+            client: {
+                overlay: {errors: true, warnings: false, runtimeErrors: true},
+            },
             proxy: [
                 {
                     context: '/api',
@@ -498,7 +529,31 @@ if (targetIsDevServer) {
                     context: '/static/plugins',
                     ...proxyToServer,
                 },
+
+                // Vibemost: Nextcloud CalDAV for the calendar integration. Same-origin for the
+                // browser, so Nextcloud needs no CORS setup during development.
+                ...(nextcloudProxyOrigin ? [{
+                    context: '/vibemost-nextcloud',
+                    logLevel: 'silent',
+                    target: nextcloudProxyOrigin,
+                    changeOrigin: true,
+                    pathRewrite: {'^/vibemost-nextcloud': ''},
+                    onProxyReq: (proxyReq) => {
+                        // Never forward the Mattermost session cookies to Nextcloud.
+                        proxyReq.removeHeader('cookie');
+                    },
+                    onProxyRes: (proxyRes) => {
+                        delete proxyRes.headers['set-cookie'];
+                    },
+                }] : []),
             ],
+            setupMiddlewares: (middlewares, devServer) => {
+                devServer.app.get('/vibemost/config.json', (req, res) => {
+                    res.set('Cache-Control', 'no-cache');
+                    res.json(vibemostRuntimeConfig);
+                });
+                return middlewares;
+            },
             port: 9005,
             devMiddleware: {
                 writeToDisk: false,

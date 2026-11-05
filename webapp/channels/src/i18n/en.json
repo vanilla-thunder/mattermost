@@ -26203,6 +26203,98 @@
     "defaultMessage": "Welcome to Mattermost",
     "description": "Title of the onboarding task list panel greeting new users; 'Mattermost' is the product name."
   },
+  "nextcloud_calendar.all_day": {
+    "defaultMessage": "All day",
+    "description": "Time label for an all-day event in the sidebar's upcoming events list, shown instead of a start time."
+  },
+  "nextcloud_calendar.connect": {
+    "defaultMessage": "Connect Nextcloud calendar",
+    "description": "Button at the bottom of the channel sidebar that opens the form to connect a Nextcloud calendar by its public share link."
+  },
+  "nextcloud_calendar.empty": {
+    "defaultMessage": "No events planned",
+    "description": "Shown in the sidebar's upcoming events list when the connected calendar has no events today or tomorrow."
+  },
+  "nextcloud_calendar.error.connection": {
+    "defaultMessage": "Could not load events from Nextcloud.",
+    "description": "Error in the sidebar's upcoming events list when the Nextcloud server could not be reached or returned an error."
+  },
+  "nextcloud_calendar.error.not_found": {
+    "defaultMessage": "The calendar link no longer works. Open the settings to update it.",
+    "description": "Error in the sidebar's upcoming events list when the saved public calendar link is no longer valid; the settings button is next to it."
+  },
+  "nextcloud_calendar.event.title": {
+    "defaultMessage": "{summary} ({calendar})",
+    "description": "Hover tooltip of an event in the sidebar's upcoming events list. {summary} is the event title, {calendar} the name of the Nextcloud calendar."
+  },
+  "nextcloud_calendar.form.cancel": {
+    "defaultMessage": "Cancel",
+    "description": "Button that closes the Nextcloud calendar settings form in the sidebar without saving."
+  },
+  "nextcloud_calendar.form.disconnect": {
+    "defaultMessage": "Disconnect",
+    "description": "Button in the Nextcloud calendar settings form that removes the saved calendar link and hides the upcoming events."
+  },
+  "nextcloud_calendar.form.error.connection": {
+    "defaultMessage": "Could not reach the Nextcloud calendar. Check the link.",
+    "description": "Validation error in the Nextcloud calendar settings form when the Nextcloud server behind the entered link could not be reached."
+  },
+  "nextcloud_calendar.form.error.invalid": {
+    "defaultMessage": "Paste a public calendar link, e.g. https://cloud.example.com/apps/calendar/p/…",
+    "description": "Validation error in the Nextcloud calendar settings form when the entered text is not a public calendar link; keep the example URL unchanged."
+  },
+  "nextcloud_calendar.form.error.not_found": {
+    "defaultMessage": "Nextcloud does not know this link. Check that sharing by link is still on.",
+    "description": "Validation error in the Nextcloud calendar settings form when Nextcloud does not recognize the entered public calendar link."
+  },
+  "nextcloud_calendar.form.events_limit": {
+    "defaultMessage": "Events to show",
+    "description": "Label of the field in the Nextcloud calendar settings form that sets how many upcoming events the sidebar shows."
+  },
+  "nextcloud_calendar.form.link": {
+    "defaultMessage": "Public calendar link",
+    "description": "Label of the input field in the Nextcloud calendar settings form where the user pastes the public calendar share link."
+  },
+  "nextcloud_calendar.form.link.hint": {
+    "defaultMessage": "In the Nextcloud Calendar app, open the menu of your calendar, choose Share and copy the share link. It is stored in this browser only.",
+    "description": "Help text below the calendar link field explaining where to find the share link in the Nextcloud Calendar app; 'Share' is the Nextcloud menu item."
+  },
+  "nextcloud_calendar.form.save": {
+    "defaultMessage": "Save",
+    "description": "Button that saves the Nextcloud calendar settings form in the sidebar."
+  },
+  "nextcloud_calendar.form.saving": {
+    "defaultMessage": "Saving…",
+    "description": "Label of the save button in the Nextcloud calendar settings form while the link is being checked."
+  },
+  "nextcloud_calendar.join.jitsi": {
+    "defaultMessage": "Join Jitsi meeting",
+    "description": "Button on an event in the sidebar's upcoming events list that opens the event's Jitsi video meeting."
+  },
+  "nextcloud_calendar.join.teams": {
+    "defaultMessage": "Join Teams meeting",
+    "description": "Button on an event in the sidebar's upcoming events list that opens the event's Microsoft Teams meeting."
+  },
+  "nextcloud_calendar.loading": {
+    "defaultMessage": "Loading events…",
+    "description": "Shown in the sidebar's upcoming events list while events are being loaded from Nextcloud."
+  },
+  "nextcloud_calendar.now": {
+    "defaultMessage": "Now",
+    "description": "Badge on an event in the sidebar's upcoming events list that is currently taking place."
+  },
+  "nextcloud_calendar.settings": {
+    "defaultMessage": "Nextcloud calendar settings",
+    "description": "Accessible label and tooltip of the gear button that opens the Nextcloud calendar settings form in the sidebar."
+  },
+  "nextcloud_calendar.title": {
+    "defaultMessage": "Upcoming events",
+    "description": "Heading of the upcoming events section at the bottom of the channel sidebar, listing today's and tomorrow's Nextcloud calendar events."
+  },
+  "nextcloud_calendar.untitled": {
+    "defaultMessage": "Untitled event",
+    "description": "Placeholder title for a calendar event in the sidebar's upcoming events list that has no title."
+  },
   "no_results.channel_files_filtered.subtitle": {
     "defaultMessage": "This channel doesn't contains any file with the selected file format.",
     "description": "Explanatory text in the channel Files tab when the selected file-type filter matches no files."
@@ -29802,6 +29894,18 @@
   "sidebar.directchannel.you": {
     "defaultMessage": "{displayname} (you)",
     "description": "Display name in the sidebar for the user's direct message channel with themselves; {displayname} is their own name."
+  },
+  "sidebar.followed_threads.attachment": {
+    "defaultMessage": "Attachment",
+    "description": "Title of a followed thread listed under its channel in the sidebar when the root post has only file attachments and no text."
+  },
+  "sidebar.followed_threads.label": {
+    "defaultMessage": "Followed threads",
+    "description": "Accessible label of the list of followed threads shown under a channel in the channel sidebar."
+  },
+  "sidebar.followed_threads.untitled": {
+    "defaultMessage": "Thread",
+    "description": "Fallback title of a followed thread listed under its channel in the sidebar when the root post has no text or attachments."
   },
   "sidebar.menu.item.notSelected": {
     "defaultMessage": "not selected",

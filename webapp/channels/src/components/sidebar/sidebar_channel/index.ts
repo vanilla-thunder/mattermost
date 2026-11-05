@@ -12,6 +12,7 @@ import {getAutoSortedCategoryIds, getDraggingState, isChannelSelected} from 'sel
 import type {GlobalState} from 'types/store';
 
 import SidebarChannel from './sidebar_channel';
+import {getSidebarThreadIds} from './sidebar_channel_threads/selectors';
 
 type OwnProps = {
     channelId: string;
@@ -49,6 +50,7 @@ function makeMapStateToProps() {
             isChannelSelected: isChannelSelected(state, ownProps.channelId),
             multiSelectedChannelIds: state.views.channelSidebar.multiSelectedChannelIds,
             autoSortedCategoryIds: getAutoSortedCategoryIds(state),
+            threadIds: getSidebarThreadIds(state, ownProps.channelId),
         };
     };
 }

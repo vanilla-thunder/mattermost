@@ -10,6 +10,7 @@ import {FormattedMessage} from 'react-intl';
 import Constants from 'utils/constants';
 
 import SidebarBaseChannel from './sidebar_base_channel';
+import SidebarChannelThreads from './sidebar_channel_threads/sidebar_channel_threads';
 import SidebarDirectChannel from './sidebar_direct_channel';
 import SidebarGroupChannel from './sidebar_group_channel';
 
@@ -30,6 +31,7 @@ function SidebarChannel({
     channelIndex,
     isAutoSortedCategory,
     autoSortedCategoryIds,
+    threadIds,
 }: Props) {
     const [show, setShow] = useState(true);
     if (!channel) {
@@ -89,6 +91,9 @@ function SidebarChannel({
         );
     }
 
+    // Followed threads are hidden while the channel is collapsed into its category
+    const threads = show && !isCollapsed() && threadIds.length > 0 ? <SidebarChannelThreads threadIds={threadIds}/> : null;
+
     if (isDraggable) {
         let selectedCount: React.ReactNode;
         if (isChannelSelected && draggingState.state && draggingState.id === channel.id && multiSelectedChannelIds.length > 1) {
@@ -122,6 +127,7 @@ function SidebarChannel({
                                 selectedDragging: isChannelSelected && draggingState.state && draggingState.id !== channel.id,
                                 fadeOnDrop: snapshot.isDropAnimating && snapshot.draggingOver && autoSortedCategoryIds.has(snapshot.draggingOver),
                                 noFloat: isAutoSortedCategory && !snapshot.isDragging,
+                                withThreads: Boolean(threads),
                             })}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
@@ -131,6 +137,7 @@ function SidebarChannel({
                             tabIndex={-1}
                         >
                             {component}
+                            {threads}
                             {selectedCount}
                         </li>
                     );
@@ -147,12 +154,14 @@ function SidebarChannel({
                 expanded: !isCollapsed(),
                 unread: isUnread,
                 active: isCurrentChannel,
+                withThreads: Boolean(threads),
             })}
             onAnimationStart={handleAnimationStart}
             onAnimationEnd={handleAnimationEnd}
             role='listitem'
         >
             {component}
+            {threads}
         </li>
     );
 }

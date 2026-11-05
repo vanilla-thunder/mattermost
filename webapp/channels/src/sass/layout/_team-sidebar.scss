@@ -1,8 +1,11 @@
 .team-sidebar {
+    --team-sidebar-width: 65px;
+    --team-icon-size: calc(var(--team-sidebar-width) * 40 / 65);
+
     z-index: 17;
     display: flex;
     overflow: hidden;
-    width: 65px;
+    width: var(--team-sidebar-width);
     flex-direction: column;
     justify-content: space-between;
     background-color: var(--sidebar-header-bg);
@@ -22,6 +25,30 @@
         width: 100%;
         flex: 0 0 auto;
         padding: 16px 0 6px;
+    }
+
+    // Vibemost: team icons scale with the sidebar width; by default 40px icons in a 65px sidebar
+    .TeamIcon.TeamIcon__sm {
+        // Without image the icon has a 3px border on each side
+        width: calc(var(--team-icon-size) - 6px);
+        height: calc(var(--team-icon-size) - 6px);
+
+        &.withImage {
+            width: var(--team-icon-size);
+            height: var(--team-icon-size);
+        }
+    }
+
+    .TeamIcon__initials.TeamIcon__initials__sm {
+        font-size: calc(var(--team-icon-size) * 14 / 40);
+    }
+
+    .team-btn.team-btn__add {
+        line-height: calc(var(--team-icon-size) + 1px);
+
+        .TeamIcon .icon-plus {
+            font-size: calc(var(--team-icon-size) * 22 / 40);
+        }
     }
 
     .team-wrapper {
@@ -103,8 +130,8 @@
 
             .order-indicator {
                 position: absolute;
-                top: 28px;
-                left: 12px;
+                top: calc(var(--team-icon-size) * 0.7);
+                left: calc((var(--team-icon-size) - 16px) / 2);
                 display: flex;
                 width: 16px;
                 height: 16px;
@@ -140,6 +167,9 @@
 @media screen and (min-width: 769px) {
     // global header style adjustments
     .team-sidebar {
+        // Vibemost: 75% of the default width; mobile keeps 65px, which its layout depends on
+        --team-sidebar-width: 49px;
+
         background: none;
         // use sidebar header variables for team sidebar
         --sidebar-teambar-bg: var(--sidebar-header-bg);

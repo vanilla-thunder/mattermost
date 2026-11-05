@@ -1,0 +1,12 @@
+# Vibemost container. Copy .env.example to .env, fill it in, then:
+#   docker compose up -d --build
+services:
+  vibemost:
+    build:
+      context: ../..
+      dockerfile: deploy/vibemost/Dockerfile
+    image: vibemost:latest
+    env_file: .env
+    ports:
+      - "${VIBEMOST_HTTP_PORT:-8080}:80"
+    restart: unless-stopped

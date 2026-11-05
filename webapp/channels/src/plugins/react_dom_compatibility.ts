@@ -1,6 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+import type {ReactNode} from 'react';
+
 import {LogLevel} from '@mattermost/types/client4';
 
 import {Client4} from 'mattermost-redux/client';
@@ -73,4 +75,37 @@ export function wrapReactDOMRoot<Args extends unknown[], Result>(api: RootAPI, o
             throw error;
         }
     };
+}
+
+// React 19 removed ReactDOM.render and unmountComponentAtNode, which plugins built against
+// React 16/17 (e.g. Jitsi <= 2.1.0) still call. Emulate them with one createRoot per container.
+type ClientRoot = {render: (children: ReactNode) => void; unmount: () => void};
+const legacyRoots = new WeakMap<Element | DocumentFragment, ClientRoot>();
+
+export function createLegacyRender(createRoot: (container: Element | DocumentFragment) => ClientRoot, flushSync: (fn: () => void) => void) {
+    function render(element: ReactNode, container: Element | DocumentFragment, callback?: () => void) {
+        let root = legacyRoots.get(container);
+        if (!root) {
+            root = createRoot(container);
+            legacyRoots.set(container, root);
+        }
+
+        // Legacy render committed synchronously; keep that so callers can touch the DOM right after.
+        const target = root;
+        flushSync(() => target.render(element));
+        callback?.();
+        return null;
+    }
+
+    function unmountComponentAtNode(container: Element | DocumentFragment) {
+        const root = legacyRoots.get(container);
+        if (!root) {
+            return false;
+        }
+        legacyRoots.delete(container);
+        root.unmount();
+        return true;
+    }
+
+    return {render, unmountComponentAtNode};
 }

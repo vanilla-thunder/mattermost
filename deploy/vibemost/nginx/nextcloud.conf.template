@@ -1,0 +1,27 @@
+# Vibemost: Nextcloud public calendars for the sidebar calendar. Only the read-only CalDAV
+# calls the calendar makes are allowed, so this is not an open proxy to the whole Nextcloud
+# server. The path may include a Nextcloud installed under a subpath.
+location ~ ^/vibemost-nextcloud/(.*/)?remote\.php/dav/public-calendars/ {
+    # limit_except can't be used here: it rejects REPORT as an unknown method.
+    if ($request_method !~ ^(PROPFIND|REPORT|OPTIONS)$) {
+        return 405;
+    }
+
+    set $nextcloud_upstream ${NEXTCLOUD_ORIGIN};
+    rewrite ^/vibemost-nextcloud(/.*)$ $1 break;
+    proxy_pass $nextcloud_upstream;
+
+    proxy_http_version 1.1;
+    proxy_ssl_server_name on;
+    proxy_ssl_name ${NEXTCLOUD_SNI};
+    proxy_set_header Host ${NEXTCLOUD_HOST};
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $vibemost_forwarded_proto;
+    proxy_set_header Upgrade "";
+    proxy_set_header Connection "";
+    # Never forward Mattermost credentials to Nextcloud, nor Nextcloud cookies back.
+    proxy_set_header Cookie "";
+    proxy_set_header Authorization "";
+    proxy_set_header Origin "";
+    proxy_hide_header Set-Cookie;
+}
