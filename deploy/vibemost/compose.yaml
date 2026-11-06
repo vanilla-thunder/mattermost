@@ -1,5 +1,6 @@
-# Vibemost container. Copy .env.example to .env, fill it in, then:
-#   docker compose up -d --build
+# Vibemost container. Build the image on a development machine and upload it
+# (see README.md), copy .env.example to .env, fill it in, then:
+#   docker compose up -d --no-build
 services:
   vibemost:
     build:

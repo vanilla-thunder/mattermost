@@ -33,23 +33,61 @@ The container checks every value at start-up and refuses to start with an invali
 The webpack dev server (`cd webapp && npm run dev-server`) reads the same `.env` file.
 Variables set in the shell take precedence.
 
+## Build
+
+**Always build the image on a development machine, never on the server.** The build runs
+`npm ci` and the full production web app build, which takes several minutes and needs more
+memory than a small server has: on a VPS with 3.3 GiB of RAM and no swap it fails with
+
+```
+failed to solve: process "/bin/sh -c npm run build && find channels/dist -name '*.map' -delete" did not complete successfully: exit code: 1
+```
+
+From the repository root on the development machine:
+
+```sh
+docker build -f deploy/vibemost/Dockerfile -t vibemost:latest .
+```
+
+Source maps are left out of the image. Build for the server's CPU architecture; add
+`--platform linux/amd64` when building on an ARM machine such as an Apple Silicon Mac.
+
+## Upload
+
+Copy the image to the server over SSH, without a registry:
+
+```sh
+docker save vibemost:latest | gzip | ssh user@server 'gunzip | docker load'
+```
+
 ## Run
+
+On the server, the repository checkout provides `compose.yaml` and holds `.env`. The first
+time:
 
 ```sh
 cd deploy/vibemost
 cp .env.example .env    # then edit it
-docker compose up -d --build
+docker compose up -d --no-build
 ```
 
-Or without compose, from the repository root:
+`--no-build` makes compose use the uploaded `vibemost:latest` image instead of building it.
 
-```sh
-docker build -f deploy/vibemost/Dockerfile -t vibemost .
-docker run -d --name vibemost --env-file deploy/vibemost/.env -p 8080:80 vibemost
-```
+## Update
 
-The image build runs `npm ci` and the full web app build. It needs several GB of RAM and
-takes a few minutes. Source maps are left out of the image.
+1. On the development machine: pull the branch, then [build](#build) and [upload](#upload)
+   the image as above.
+2. On the server, in the repository checkout, pick up any changes to the compose file and
+   restart the container with the new image:
+
+   ```sh
+   git pull --ff-only origin vibemost
+   cd deploy/vibemost
+   docker compose up -d --no-build
+   ```
+
+`--ff-only` stops instead of merging if the checkout has local commits or has drifted from
+the branch. `.env` is ignored by git, so the pull leaves it alone.
 
 ## TLS
 
