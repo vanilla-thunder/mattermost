@@ -21,6 +21,13 @@ map $http_x_forwarded_proto $vibemost_forwarded_proto {
     ''      $scheme;
 }
 
+# The client config response is rewritten below (sub_filter), which needs it uncompressed.
+# An empty value drops the header.
+map $uri $mattermost_accept_encoding {
+    /api/v4/config/client  '';
+    default                $http_accept_encoding;
+}
+
 server {
     listen 80 default_server;
     server_name _;
@@ -49,6 +56,7 @@ server {
     proxy_set_header X-Forwarded-Proto $vibemost_forwarded_proto;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
+    proxy_set_header Accept-Encoding $mattermost_accept_encoding;
     # Keep session cookies on this host, even with AllowCookiesForSubdomains enabled.
     proxy_cookie_domain ${MATTERMOST_SNI} $host;
     proxy_redirect ${MATTERMOST_ORIGIN}/ /;
@@ -57,6 +65,15 @@ server {
 
     location /api/ {
         proxy_pass $mattermost_upstream;
+    }
+
+    # Report this host as the SiteURL. The Desktop app replaces an entered server URL
+    # with the SiteURL from this response when the two differ, which would switch it
+    # back to the stock client.
+    location = /api/v4/config/client {
+        proxy_pass $mattermost_upstream;
+        sub_filter_types application/json;
+        sub_filter '"SiteURL":"${MATTERMOST_ORIGIN}"' '"SiteURL":"$vibemost_forwarded_proto://$http_host"';
     }
 
     location /plugins/ {
