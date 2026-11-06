@@ -3,7 +3,7 @@
 
 import moment from 'moment';
 import React, {useMemo} from 'react';
-import type {MouseEvent, KeyboardEvent} from 'react';
+import type {MouseEvent, KeyboardEvent, ReactNode} from 'react';
 import {FormattedDate, FormattedMessage, FormattedTime, useIntl} from 'react-intl';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -32,11 +32,19 @@ interface Props {
     isStatusDnd: boolean;
 }
 
-export default function UserAccountDndMenuItem(props: Props) {
-    const {formatMessage} = useIntl();
-    const dispatch = useDispatch();
+type DndDurationOptions = {
+    userId: UserProfile['id'];
+    timezone?: string;
+    shouldConfirmBeforeStatusChange: boolean;
+};
 
-    const dndEndTime = useSelector((state: GlobalState) => getDndEndTimeForUserId(state, props.userId));
+/**
+ * The "clear after" choices for do not disturb, as menu items. Returned as an
+ * array (not a component) so they are direct children of the menu list, which
+ * keyboard navigation relies on.
+ */
+export function useDndDurationMenuItems(props: DndDurationOptions): ReactNode[] {
+    const dispatch = useDispatch();
 
     const isMilitaryTime = useSelector((state: GlobalState) => getBool(state, Preferences.CATEGORY_DISPLAY_SETTINGS, Preferences.USE_MILITARY_TIME, false));
 
@@ -107,6 +115,105 @@ export default function UserAccountDndMenuItem(props: Props) {
             dnd_end_time: endTime.utc().unix(),
         }));
     }
+
+    return [
+        <Menu.Item
+            key='doNotClear'
+            id={DND_SUB_MENU_ITEMS_IDS.DO_NOT_CLEAR}
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.doNotClear'
+                    defaultMessage="Don't clear"
+                />
+            }
+            onClick={handleSubMenuItemClick}
+        />,
+        <Menu.Item
+            key='thirtyMinutes'
+            id={DND_SUB_MENU_ITEMS_IDS.THIRTY_MINUTES}
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.30Minutes'
+                    defaultMessage='30 mins'
+                />
+            }
+            onClick={handleSubMenuItemClick}
+        />,
+        <Menu.Item
+            key='oneHour'
+            id={DND_SUB_MENU_ITEMS_IDS.ONE_HOUR}
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.1Hour'
+                    defaultMessage='1 hour'
+                />
+            }
+            onClick={handleSubMenuItemClick}
+        />,
+        <Menu.Item
+            key='twoHours'
+            id={DND_SUB_MENU_ITEMS_IDS.TWO_HOURS}
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.2Hours'
+                    defaultMessage='2 hours'
+                />
+            }
+            onClick={handleSubMenuItemClick}
+        />,
+        <Menu.Item
+            key='tomorrow'
+            id={DND_SUB_MENU_ITEMS_IDS.TOMORROW}
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.tomorrow'
+                    defaultMessage='Tomorrow'
+                />
+            }
+            trailingElements={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.tomorrowsDateTime'
+                    defaultMessage='{shortDay}, {shortTime}'
+                    values={{
+                        shortDay: (
+                            <FormattedDate
+                                value={tomorrow9AMDateObject}
+                                weekday='short'
+                                timeZone={props.timezone}
+                            />
+                        ),
+                        shortTime: (
+                            <FormattedTime
+                                value={tomorrow9AMDateObject}
+                                timeStyle='short'
+                                hour12={!isMilitaryTime}
+                                timeZone={props.timezone}
+                            />
+                        ),
+                    }}
+                />
+            }
+            onClick={handleSubMenuItemClick}
+        />,
+        <Menu.Item
+            key='custom'
+            labels={
+                <FormattedMessage
+                    id='userAccountMenu.dndSubMenuItem.custom'
+                    defaultMessage='Choose date and time'
+                />
+            }
+            onClick={openCustomTimePicker}
+        />,
+    ];
+}
+
+export default function UserAccountDndMenuItem(props: Props) {
+    const {formatMessage} = useIntl();
+
+    const durationItems = useDndDurationMenuItems(props);
+
+    const dndEndTime = useSelector((state: GlobalState) => getDndEndTimeForUserId(state, props.userId));
 
     const trailingElement = useMemo(() => {
         if (props.isStatusDnd) {
@@ -211,88 +318,7 @@ export default function UserAccountDndMenuItem(props: Props) {
                 </h5>
             }
         >
-            <Menu.Item
-                id={DND_SUB_MENU_ITEMS_IDS.DO_NOT_CLEAR}
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.doNotClear'
-                        defaultMessage="Don't clear"
-                    />
-                }
-                onClick={handleSubMenuItemClick}
-            />
-            <Menu.Item
-                id={DND_SUB_MENU_ITEMS_IDS.THIRTY_MINUTES}
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.30Minutes'
-                        defaultMessage='30 mins'
-                    />
-                }
-                onClick={handleSubMenuItemClick}
-            />
-            <Menu.Item
-                id={DND_SUB_MENU_ITEMS_IDS.ONE_HOUR}
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.1Hour'
-                        defaultMessage='1 hour'
-                    />
-                }
-                onClick={handleSubMenuItemClick}
-            />
-            <Menu.Item
-                id={DND_SUB_MENU_ITEMS_IDS.TWO_HOURS}
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.2Hours'
-                        defaultMessage='2 hours'
-                    />
-                }
-                onClick={handleSubMenuItemClick}
-            />
-            <Menu.Item
-                id={DND_SUB_MENU_ITEMS_IDS.TOMORROW}
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.tomorrow'
-                        defaultMessage='Tomorrow'
-                    />
-                }
-                trailingElements={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.tomorrowsDateTime'
-                        defaultMessage='{shortDay}, {shortTime}'
-                        values={{
-                            shortDay: (
-                                <FormattedDate
-                                    value={tomorrow9AMDateObject}
-                                    weekday='short'
-                                    timeZone={props.timezone}
-                                />
-                            ),
-                            shortTime: (
-                                <FormattedTime
-                                    value={tomorrow9AMDateObject}
-                                    timeStyle='short'
-                                    hour12={!isMilitaryTime}
-                                    timeZone={props.timezone}
-                                />
-                            ),
-                        }}
-                    />
-                }
-                onClick={handleSubMenuItemClick}
-            />
-            <Menu.Item
-                labels={
-                    <FormattedMessage
-                        id='userAccountMenu.dndSubMenuItem.custom'
-                        defaultMessage='Choose date and time'
-                    />
-                }
-                onClick={openCustomTimePicker}
-            />
+            {durationItems}
         </Menu.SubMenu>
     );
 }

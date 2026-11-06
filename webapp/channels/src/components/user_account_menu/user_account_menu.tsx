@@ -11,14 +11,10 @@ import * as Menu from 'components/menu';
 
 import {ModalIdentifiers, UserStatuses} from 'utils/constants';
 
-import UserAccountAwayMenuItem from './user_account_away_menuitem';
 import UserAccountCustomStatusMenuItem from './user_account_custom_status_menuitem';
-import UserAccountDndMenuItem from './user_account_dnd_menuitem';
 import UserAccountLogoutMenuItem from './user_account_logout_menuitem';
 import UserAccountMenuButton from './user_account_menuButton';
 import UserAccountNameMenuItem from './user_account_name_menuitem';
-import UserAccountOfflineMenuItem from './user_account_offline_menuitem';
-import UserAccountOnlineMenuItem from './user_account_online_menuitem';
 import UserAccountOutOfOfficeMenuItem from './user_account_out_of_office_menuitem';
 import UserAccountProfileMenuItem from './user_account_profile_menuitem';
 import UserAccountSetCustomStatusMenuItem from './user_account_set_custom_status_menuitem';
@@ -104,28 +100,7 @@ export default function UserAccountMenu(props: Props) {
             {props.isCustomStatusEnabled && (
                 <Menu.Separator/>
             )}
-            <UserAccountOnlineMenuItem
-                userId={props.userId}
-                shouldConfirmBeforeStatusChange={shouldConfirmBeforeStatusChange}
-                isStatusOnline={props.status === UserStatuses.ONLINE}
-            />
-            <UserAccountAwayMenuItem
-                userId={props.userId}
-                shouldConfirmBeforeStatusChange={shouldConfirmBeforeStatusChange}
-                isStatusAway={props.status === UserStatuses.AWAY}
-            />
-            <UserAccountDndMenuItem
-                userId={props.userId}
-                shouldConfirmBeforeStatusChange={shouldConfirmBeforeStatusChange}
-                timezone={props.timezone}
-                isStatusDnd={props.status === UserStatuses.DND}
-            />
-            <UserAccountOfflineMenuItem
-                userId={props.userId}
-                shouldConfirmBeforeStatusChange={shouldConfirmBeforeStatusChange}
-                isStatusOffline={props.status === UserStatuses.OFFLINE}
-            />
-            <Menu.Separator/>
+            {/* Statuses (online, away, do not disturb, offline) are set from the status switch in the global header. */}
             <UserAccountProfileMenuItem
                 userId={props.userId}
             />

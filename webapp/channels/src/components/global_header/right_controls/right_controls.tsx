@@ -25,6 +25,7 @@ import AtMentionsButton from './at_mentions_button/at_mentions_button';
 import PlanUpgradeButton from './plan_upgrade_button';
 import SavedPostsButton from './saved_posts_button/saved_posts_button';
 import SettingsButton from './settings_button';
+import StatusSwitch from './status_switch';
 
 const RightControlsContainer = styled.div`
     display: flex;
@@ -62,6 +63,7 @@ const RightControls = ({productId = null}: Props): JSX.Element => {
             id={'RightControlsContainer'}
         >
             <PlanUpgradeButton/>
+            <StatusSwitch/>
             {isChannels(productId) ? (
                 <>
                     <AtMentionsButton/>

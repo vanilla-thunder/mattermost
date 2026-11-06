@@ -23147,6 +23147,46 @@
     "defaultMessage": "Product switch menu",
     "description": "Accessibility label (not visible) for the product switcher button at the left of the global header, which opens the menu of Mattermost products and tools."
   },
+  "globalHeader.statusSwitch.ariaLabel": {
+    "defaultMessage": "Your status",
+    "description": "Accessible name for the online/away/do-not-disturb/offline switch in the top bar (global header)."
+  },
+  "globalHeader.statusSwitch.away": {
+    "defaultMessage": "afk",
+    "description": "Short label (deliberately terse, like 'afk') on the top-bar status switch button that sets the user's status to away."
+  },
+  "globalHeader.statusSwitch.away.title": {
+    "defaultMessage": "Set your status to away",
+    "description": "Tooltip on the top-bar status switch button that sets the user's status to away."
+  },
+  "globalHeader.statusSwitch.dnd": {
+    "defaultMessage": "dnd",
+    "description": "Short label (deliberately terse, like 'dnd') on the top-bar status switch button that opens a menu to set do not disturb for a chosen duration."
+  },
+  "globalHeader.statusSwitch.dnd.ariaLabel": {
+    "defaultMessage": "dnd, choose how long",
+    "description": "Accessible name of the top-bar 'dnd' button; it opens a menu of durations for do not disturb."
+  },
+  "globalHeader.statusSwitch.dnd.title": {
+    "defaultMessage": "Set your status to do not disturb",
+    "description": "Tooltip on the top-bar 'dnd' button, which opens a menu to choose how long do not disturb lasts."
+  },
+  "globalHeader.statusSwitch.offline": {
+    "defaultMessage": "offline",
+    "description": "Short label (deliberately terse, lowercase) on the top-bar status switch button that sets the user's status to offline."
+  },
+  "globalHeader.statusSwitch.offline.title": {
+    "defaultMessage": "Set your status to offline",
+    "description": "Tooltip on the top-bar status switch button that sets the user's status to offline."
+  },
+  "globalHeader.statusSwitch.online": {
+    "defaultMessage": "online",
+    "description": "Short label (deliberately terse, lowercase) on the top-bar status switch button that sets the user's status to online."
+  },
+  "globalHeader.statusSwitch.online.title": {
+    "defaultMessage": "Set your status to online",
+    "description": "Tooltip on the top-bar status switch button that sets the user's status to online."
+  },
   "globalThreads.heading": {
     "defaultMessage": "Followed threads",
     "description": "Heading of the global Threads view listing threads the user follows; also used as the mobile channel-header title for that view."
